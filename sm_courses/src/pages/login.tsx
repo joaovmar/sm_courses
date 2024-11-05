@@ -4,7 +4,7 @@ import { Logo } from "../components/Logo";
 
 const Login: React.FC = () => {
     return (
-        <ContainerPrincipal className="bg-slate-800 grid grid-cols-3">
+        <div className="flex flex-col min-h-screen bg-slate-800 bg-slate-800 grid grid-cols-3">
             <div className="col-span-2 flex flex-col gap-14 justify-center items-center pl-96 text-center bg-smCourses_background bg-cover bg-right bg-no-repeat">
                 <Logo className={'hover:animate-pulse w-1/3'} />
                 <p className="text-white hover:text-black font-bold border hover:border-white rounded w-2/3 p-4 hover:bg-blue-400 text-center">Primeiro acesso</p>
@@ -18,7 +18,7 @@ const Login: React.FC = () => {
 
                 <button className="bg-blue-950 hover:bg-blue-400 w-2/3 p-4 border border-slate-600 hover:border-black rounded-md text-white font-bold">Entrar</button>
             </div>
-        </ContainerPrincipal>
+        </div>
     );
 };
 

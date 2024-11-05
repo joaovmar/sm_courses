@@ -7,11 +7,9 @@ const Home: React.FC = () => {
 
     return (
         <ContainerPrincipal className="bg-slate-800">
-            <Menu />
             <ContainerContentCourses>
                 <CursoCard />
             </ContainerContentCourses>
-            <Footer />
         </ContainerPrincipal>
     )
 }
