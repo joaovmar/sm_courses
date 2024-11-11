@@ -2,6 +2,8 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./pages/login";
 import Home from "./pages/home";
+import CoursePage from "./pages/coursePage";
+import TeacherPage from "./pages/teacherPage";
 
 
 function App() {
@@ -10,6 +12,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/Home" element={<Home />} />
+        <Route path='/Curso/CursoNome/AulaId' element={<CoursePage />} />
+        <Route path='/PainelTutor' element={<TeacherPage />} /> 
       </Routes>
     </Router>
   );

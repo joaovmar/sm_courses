@@ -39,7 +39,7 @@ export function Menu() {
                         {[
                             { label: 'Home', path: '/home' },
                             { label: 'Meus Cursos', path: '/aboutUs' },
-                            { label: 'Painel do Professor', path: '/home' },
+                            { label: 'Painel do Professor', path: '/PainelTutor' },
                             { label: 'Sobre nós', path: '/aboutUs' },
                             { label: 'Gerenciamento - Usuários', path: '/userManager' },
                             { label: 'Gerenciamento - Perfis', path: '/groupManager' },
