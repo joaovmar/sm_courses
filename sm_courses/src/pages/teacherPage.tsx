@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ContainerContent, ContainerPrincipal } from "../components/Container";
 import { CursoCard } from "../components/CursoCard";
+import { BiPlusCircle } from "react-icons/bi";
+import { MdDelete, MdLibraryAdd } from "react-icons/md";
 
 interface Curso {
     id: number;
@@ -11,8 +14,8 @@ interface Curso {
 
 const TeacherPage: React.FC = () => {
     const [cursos, setCursos] = useState<Curso[]>([]);
+    const navigate = useNavigate();
 
-    // Função para buscar todos os cursos da API
     const fetchCursos = async () => {
         try {
             const response = await fetch('http://localhost:8000/cursos/');
@@ -24,30 +27,28 @@ const TeacherPage: React.FC = () => {
         }
     };
 
-    // Carrega os cursos ao montar o componente
+
     useEffect(() => {
         fetchCursos();
     }, []);
 
-    // Função para editar curso
-    const handleEdit = async (id: number) => {
-        const cursoEditado = { nome: "Novo Nome", descricao: "Nova Descrição" }; // Dados de exemplo para edição
+    const handleDeleteAll = async () => {
+        if (!window.confirm("Tem certeza de que deseja excluir todos os cursos?")) return;
         try {
-            const response = await fetch(`http://localhost:8000/cursos/${id}/`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(cursoEditado),
-            });
-            if (!response.ok) throw new Error("Erro ao editar curso");
-            fetchCursos(); // Atualiza a lista de cursos após a edição
+            await Promise.all(cursos.map(async (curso) => {
+                const response = await fetch(`http://localhost:8000/cursos/${curso.id}/`, { method: "DELETE" });
+                if (!response.ok) throw new Error("Erro ao excluir curso");
+            }));
+            setCursos([]);
         } catch (error) {
-            console.error("Erro ao editar curso:", error);
+            console.error("Erro ao excluir cursos:", error);
         }
     };
 
-    // Função para excluir curso com confirmação
+    const handleEdit = (id: number) => {
+        navigate(`/PainelTutor/EditarCurso/${id}`);
+    };
+    
     const handleDelete = async (id: number) => {
         if (!window.confirm("Tem certeza de que deseja excluir este curso?")) return;
         try {
@@ -55,7 +56,7 @@ const TeacherPage: React.FC = () => {
                 method: "DELETE",
             });
             if (!response.ok) throw new Error("Erro ao excluir curso");
-            setCursos(cursos.filter((curso) => curso.id !== id)); // Remove o curso excluído da lista
+            setCursos(cursos.filter((curso) => curso.id !== id));
         } catch (error) {
             console.error("Erro ao excluir curso:", error);
         }
@@ -64,16 +65,31 @@ const TeacherPage: React.FC = () => {
     return (
         <ContainerPrincipal>
             <ContainerContent>
+                <div style={{ marginBottom: "20px" }} className="flex justify-end gap-4">
+                    <button 
+                        onClick={() => navigate('/PainelTutor/AdicionarCurso')}
+                        className="flex items-center rounded gap-3 p-4 font-bold text-white bg-blue-500 hover:bg-blue-300 hover:text-black">
+                        <BiPlusCircle />
+                        <p>Novo Curso</p>
+                    </button>
+                    <button 
+                        onClick={() => navigate('/PainelTutor/AdicionarAula')}
+                        className="flex items-center rounded gap-3 p-4 font-bold text-white bg-green-500 hover:bg-green-300 hover:text-black">
+                        <MdLibraryAdd />
+                        <p>Adicionar Aulas</p>
+                    </button>
+                </div>
                 {cursos.map((curso) => (
                     <CursoCard
                         key={curso.id}
                         nome={curso.nome}
                         descricao={curso.descricao}
-                        professor={curso.professor.nome}
+                        professor={curso.professor?.nome || "Professor não definido"}
                         onEdit={() => handleEdit(curso.id)}
                         onDelete={() => handleDelete(curso.id)}
                     />
                 ))}
+
             </ContainerContent>
         </ContainerPrincipal>
     );

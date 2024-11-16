@@ -75,8 +75,8 @@ class Aula(models.Model):
     descricao = models.TextField(max_length=200)
     url = models.CharField(max_length=500, blank=True, null=True)
     nome = models.CharField(max_length=150)
-    professor = models.ForeignKey(
-        Professor,
+    curso = models.ForeignKey(
+        Curso,
         on_delete=models.CASCADE,
         related_name='aulas'
     )

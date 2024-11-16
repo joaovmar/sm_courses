@@ -38,7 +38,15 @@ export function ContainerCourse({children, className}: ContainerProps) {
 
 export function ContainerContent({children, className}: ContainerProps) {
     return (
-        <div className={`flex-grow ${className}`}>
+        <div className={`flex-grow m-8 ${className}`}>
+            {children}
+        </div>
+    )
+}
+
+export function ContainerTable({children, className}: ContainerProps) {
+    return (
+        <div className={`bg-slate-700 p-4 rounded-md shadow-2xl ${className}`}>
             {children}
         </div>
     )

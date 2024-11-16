@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ContainerContentCourses, ContainerPrincipal } from "../components/Container";
 import { CursoCard } from "../components/CursoCard";
+import axios from "axios";
 
 interface Curso {
     id: number;
@@ -12,23 +14,22 @@ interface Curso {
 
 const Home: React.FC = () => {
     const [cursos, setCursos] = useState<Curso[]>([]);
+    const navigate = useNavigate();
+
+    const fetchCursos = async () => {
+        try {
+            const response = await axios.get("http://localhost:8000/cursos/");
+            setCursos(response.data);
+        } catch (error) {
+            console.error("Erro ao buscar cursos:", error);
+        }
+    };
+
+    const handleView = (id: number) => {
+        navigate(`/Curso/${id}`);
+    };
 
     useEffect(() => {
-        const fetchCursos = async () => {
-            try {
-                // Use a rota configurada para `cursos` no Django
-                const response = await fetch('http://localhost:8000/cursos/');
-                if (response.ok) {
-                    const data = await response.json();
-                    setCursos(data);
-                } else {
-                    console.error("Erro ao buscar cursos:", response.statusText);
-                }
-            } catch (error) {
-                console.error("Erro ao buscar cursos:", error);
-            }
-        };
-
         fetchCursos();
     }, []);
 
@@ -41,11 +42,12 @@ const Home: React.FC = () => {
                         nome={curso.nome}
                         descricao={curso.descricao}
                         professor={curso.professor.nome}
+                        onView={() => navigate(`/Curso/${curso.id}`)} // Adicionando navegação para a página do curso
                     />
                 ))}
             </ContainerContentCourses>
         </ContainerPrincipal>
     );
-}
+};
 
 export default Home;
