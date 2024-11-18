@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ContainerContent, ContainerPrincipal, ContainerTable } from "../components/Container";
-import axios from "axios";
+import axios from "axios"; // Biblioteca para requisições HTTP
 
 interface Curso {
     id: number;
     nome: string;
 }
-
+// Componente funcional principal da página para adicionar aulas
 const AddAulaPage: React.FC = () => {
     const [cursoId, setCursoId] = useState<number | null>(null);
     const [nome, setNome] = useState("");
@@ -16,7 +16,7 @@ const AddAulaPage: React.FC = () => {
     const [cursos, setCursos] = useState<Curso[]>([]);
     const [errorMessage, setErrorMessage] = useState("");
     const navigate = useNavigate();
-
+// Função para buscar a lista de cursos do backend
     const fetchCursos = async () => {
         try {
             const response = await axios.get("http://127.0.0.1:8000/cursos/");
@@ -25,9 +25,9 @@ const AddAulaPage: React.FC = () => {
             setErrorMessage(`Erro ao buscar os cursos: ${error}`);
         }
     };
-
+ // Função para enviar os dados da nova aula para o backend
     const handleAddAula = async (e: React.FormEvent) => {
-        e.preventDefault();
+        e.preventDefault();// Previne o comportamento padrão do formulário
         const novaAula = {
             nome,
             descricao,
@@ -46,21 +46,21 @@ const AddAulaPage: React.FC = () => {
             setErrorMessage(`Erro ao adicionar a aula: ${error}`);
         }
     };
-
+// Adiciona um novo campo para inserir outra URL
     const handleAddUrlField = () => {
         setUrls([...urls, ""]);
     };
-
+// Remove um campo de URL com base no índice
     const handleRemoveUrlField = (index: number) => {
         setUrls(urls.filter((_, i) => i !== index));
     };
-
+// Atualiza o valor de uma URL com base no índice
     const handleUrlChange = (index: number, value: string) => {
         const newUrls = [...urls];
         newUrls[index] = value;
         setUrls(newUrls);
     };
-
+// Busca os cursos assim que o componente é montado
     useEffect(() => {
         fetchCursos();
     }, []);
