@@ -30,6 +30,7 @@ class Log(models.Model):
 class Professor(models.Model):
     id = models.AutoField(primary_key=True, unique=True)
     nome = models.CharField(max_length=150)
+    email = models.EmailField(max_length=150, blank=False, null=False, unique=True)
     descricao = models.CharField(max_length=200, blank=True, null=True)
 
     def __str__(self):
@@ -78,7 +79,7 @@ class Aula(models.Model):
     curso = models.ForeignKey(
         Curso,
         on_delete=models.CASCADE,
-        related_name='aulas'
+        related_name='aulas',
     )
 
     def __str__(self):
@@ -88,8 +89,31 @@ class Aula(models.Model):
 class Aluno(models.Model):
     id = models.AutoField(primary_key=True, unique=True)
     nome = models.CharField(max_length=150)
-    certificados = models.ManyToManyField(Certificado, related_name='alunos')  # Muitos certificados para muitos alunos
-    cursos = models.ManyToManyField(Curso, related_name='alunos')  # Muitos cursos para muitos alunos
+    email = models.EmailField(max_length=150, blank=False, null=False, unique=True)
+    certificados = models.ManyToManyField(
+        Certificado,
+        related_name='alunos',
+        blank=True  # Permite que a relação seja opcional
+    )  
+    cursos = models.ManyToManyField(
+        Curso,
+        related_name='alunos',
+        blank=True  # Permite que a relação seja opcional
+    )
 
     def __str__(self):
         return f'{self.id} || {self.nome}'
+
+class AlunoCursoProgresso(models.Model):
+    aluno = models.ForeignKey(User, on_delete=models.CASCADE, related_name='progresso_cursos')  # Ajuste o related_name
+    curso = models.ForeignKey(Curso, on_delete=models.CASCADE, related_name='aluno_progresso')  # Ajuste o related_name
+    aulas_assistidas = models.ManyToManyField(Aula, related_name='progresso_aulas', blank=True)
+
+    @property
+    def progresso(self):
+        total_aulas = self.curso.aulas.count()
+        assistidas = self.aulas_assistidas.count()
+        return (assistidas / total_aulas) * 100 if total_aulas > 0 else 0
+
+    def __str__(self):
+        return f"{self.aluno.username} - {self.curso.nome}"

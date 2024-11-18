@@ -1,5 +1,10 @@
 from rest_framework import serializers
-from .models import Log, Professor, Aluno, Aula, Curso, Certificado
+from .models import User, Log, Professor, Aluno, Aula, Curso, Certificado
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = '__all__'
 
 class LogSerializer(serializers.ModelSerializer):
     class Meta:

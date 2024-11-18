@@ -11,12 +11,28 @@ interface Aula {
   videoUrl: string;
 }
 
+const registrarAula = async (alunoId: number, cursoId: number, aulaId: number) => {
+  try {
+    const response = await axios.post("http://127.0.0.1:8000/api/registrar-aula-assistida/", {
+      aluno_id: alunoId,
+      curso_id: cursoId,
+      aula_id: aulaId,
+    });
+
+    console.log("Progresso atualizado:", response.data.progresso);
+  } catch (error) {
+    console.error("Erro ao registrar aula assistida:", error);
+  }
+};
+
 const CoursePage: React.FC = () => {
   const { id, aulaId } = useParams();
   const [aulas, setAulas] = useState<Aula[]>([]);
   const [currentAula, setCurrentAula] = useState<Aula | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
+
+  const alunoId = Number(localStorage.getItem("user_id")); // Obtém o ID do aluno logado
 
   const fetchAulas = async () => {
     try {
@@ -27,6 +43,11 @@ const CoursePage: React.FC = () => {
           ? response.data.find((aula: Aula) => aula.id === Number(aulaId))
           : response.data[0];
         setCurrentAula(selectedAula || response.data[0]);
+
+        // Registra a aula como assistida no backend
+        if (selectedAula) {
+          registrarAula(alunoId, Number(id), selectedAula.id);
+        }
       }
     } catch (error) {
       setErrorMessage(`Erro ao buscar aulas: ${error}`);
@@ -37,7 +58,22 @@ const CoursePage: React.FC = () => {
     fetchAulas();
   }, [id, aulaId]);
 
-  const handleAulaClick = (aulaId: number) => {
+  const handleAulaClick = async (aulaId: number) => {
+    try {
+        const alunoId = localStorage.getItem("user_id"); // Obtenha o ID do aluno logado
+        await axios.post("http://127.0.0.1:8000/api/registrar-aula-assistida/", {
+            aluno_id: alunoId,
+            curso_id: id,
+            aula_id: aulaId,
+        }, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
+        });
+        console.log("Aula registrada com sucesso");
+    } catch (error) {
+        console.error("Erro ao registrar a aula assistida:", error);
+    }
     navigate(`/Curso/${id}/${aulaId}`);
   };
 
