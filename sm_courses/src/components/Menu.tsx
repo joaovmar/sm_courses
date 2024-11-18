@@ -54,7 +54,6 @@ export function Menu() {
                     <div className="absolute font-medium top-full left-0 pl-4 min-h-full w-2/3 md:w-3/12 shadow-2xl border-r border-b border-slate-700 rounded-r bg-slate-900 z-50">
                         {[
                             { label: "Home", path: "/home" },
-                            { label: "Meus Cursos", path: "/MeusCursos" },
                             { label: "Painel do Professor", path: "/PainelTutor" },
                             { label: "Sobre nós", path: "/SobreNos" },
                             { label: "Gerenciamento - Usuários", path: "/Gerenciamento/Usuario" },

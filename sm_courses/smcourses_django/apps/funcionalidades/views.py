@@ -185,31 +185,6 @@ class MeusCursosView(APIView):
         return Response(data, status=200)
 
 
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def aluno_progresso(request, aluno_id):
-    try:
-        aluno = get_object_or_404(User, pk=aluno_id)
-        progresso = AlunoCursoProgresso.objects.filter(aluno=aluno).select_related('curso')
-        
-        data = [
-            {
-                "curso_id": p.curso.id,
-                "curso_nome": p.curso.nome,
-                "descricao": p.curso.descricao,
-                "progresso": p.progresso,
-                "aulas_assistidas": list(p.aulas_assistidas.values_list('id', flat=True)),
-                "total_aulas": p.curso.aulas.count()
-            }
-            for p in progresso
-        ]
-        
-        return JsonResponse(data, safe=False, status=200)
-
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
-
-
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def logout_view(request):
@@ -232,25 +207,6 @@ from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-
-@api_view(['POST'])
-@permission_classes([AllowAny])
-def registrar_aula_assistida(request):
-    aluno_id = request.data.get('aluno_id')
-    curso_id = request.data.get('curso_id')
-    aula_id = request.data.get('aula_id')
-
-    aluno = get_object_or_404(User, pk=aluno_id)
-    progresso = get_object_or_404(AlunoCursoProgresso, aluno=aluno, curso_id=curso_id)
-    aula = get_object_or_404(Aula, pk=aula_id)
-
-    progresso.aulas_assistidas.add(aula)
-    progresso.save()
-
-    return Response({
-        "message": "Aula registrada com sucesso.",
-        "progresso": progresso.progresso
-    }, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
